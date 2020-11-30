@@ -50,35 +50,28 @@
       </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
         <nuxt />
+        <v-snackbar
+          v-model="snackbar_show"
+          :color="snackbar.color"
+          :timeout="snackbar.timeout"
+          :top="snackbar.top"
+          :bottom="snackbar.bottom"
+          :left="snackbar.left"
+          :right="snackbar.right"
+          :multi-line="snackbar.multiLine"
+          :vertical="snackbar.vertical"
+        >
+          <v-btn block text class="ma-0">
+            <v-icon left>{{ snackbar.icon }}</v-icon>
+            <span v-html="snackbar.text"></span>
+          </v-btn>
+        </v-snackbar>
       </v-container>
     </v-main>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
     <v-footer
       :absolute="!fixed"
       app
@@ -89,12 +82,25 @@
 </template>
 
 <script>
+import { EventBus } from '@/utils/event-bus'
 export default {
   data () {
     return {
       clipped: false,
       drawer: false,
       fixed: false,
+      snackbar: {
+        text: "",
+        bottom: true,
+        top: false,
+        right: true,
+        left: false,
+        icon: "",
+        timeout: 5000,
+        miltiLine: false,
+        vertical: false,
+      },
+      snackbar_show: false ,
       items: [
         {
           icon: 'mdi-apps',
@@ -108,10 +114,25 @@ export default {
         }
       ],
       miniVariant: false,
-      right: true,
-      rightDrawer: false,
       title: 'Vuetify.js'
     }
-  }
+  } ,
+  created() {
+  } ,
+  mounted () {
+    EventBus.$on("setSnack", (data) => {
+      if (typeof data === "string") {
+        this.snackbar.text = data;
+      } else {
+        this.snackbar.text = data.text;
+        this.snackbar.color = data.color;
+        this.snackbar.multiLine = data.multiLine;
+        this.snackbar.vertical = data.vertical;
+        if (data.color == "red") this.snackbar.icon = "mdi-alert";
+        else if (data.color == "green") this.snackbar.icon = "mdi-check";
+      }
+      this.snackbar_show = true;
+    });
+  },
 }
 </script>

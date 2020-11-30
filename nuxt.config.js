@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import fa from 'vuetify/es5/locale/fa'
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -11,20 +12,23 @@ export default {
       { hid: 'description', name: 'description', content: '' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' } ,
     ]
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
+    "@/assets/fonts/iransans/css/fontiran.css" ,
+    '~/assets/variables.scss' ,
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+    // {src: '~/plugins/froala' , ssr: false}
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
-  components: true,
+  // components: true,
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
@@ -45,6 +49,11 @@ export default {
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
+    rtl: true,
+    lang: {
+      locales: { fa },
+      current: 'fa',
+    },
     customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: true,
@@ -64,5 +73,18 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+    // extend(config, {isDev , isClient}) {
+    //   if(isClient) {
+    //     config.module.rules.push({
+    //       test: /froala_editor\.pkgd\.min\.css$/,
+    //       loader: 'string-replace-loader',
+    //       exclude: /(node_modules)/ ,
+    //       options: {
+    //         search: /fill-available/g,
+    //         replace: 'stretch'
+    //       }
+    //     })
+    //   }
+    // }
   }
 }

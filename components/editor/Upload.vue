@@ -1,7 +1,7 @@
 <template>
     <div class="upload-file-drag">
-        <v-card outlined class="legend-box" :disabled="disabled">
-        <v-subheader class="legend-label"
+        <v-card outlined>
+        <v-subheader
             >لطفا عکس دلخواهتان را وارد کنید</v-subheader
         >
         <v-card-text>
@@ -48,19 +48,20 @@
             <v-col class="col-12 pb-0">
                 <file-upload
                 extensions="gif,jpg,jpeg,png,webp"
-                accept="image/png, image/gif, image/jpeg, image/webp"
+                accept="image/png, image/jpeg, image/webp"
                 class="full-width"
                 v-model="files"
                 ref="upload"
                 @input-file="inputFile"
                 @input-filter="inputFilter"
-                multiple
+                :multiple='false'
                 >
                     <v-file-input
-                        class="_text"
+                        outlined
+                        dense
                         prepend-icon
                         append-icon="mdi-cloud-upload"
-                        placeholder="افزودن عکس"
+                        placeholder="انتخاب عکس"
                     ></v-file-input>
                 </file-upload>
             </v-col>
@@ -124,13 +125,6 @@
 
     export default {
     props: {
-        galleries: {
-        type: Array,
-        },
-        disabled: {
-        type: Boolean,
-        default: false,
-        },
     },
     components: {
         FileUpload,
@@ -147,12 +141,6 @@
         };
     },
     watch: {
-        galleries: {
-        handler(val) {
-            this.files = val;
-        },
-        deep: true,
-        },
         edit(value) {
         if (value) {
             this.$nextTick(function () {
@@ -173,6 +161,9 @@
             }
         }
         },
+        files(v) {
+            this.$emit('image-url' , v.length > 0 ?  v[0].url || v[0].path  : null)
+        }
     },
     methods: {
         previewImage(file) {
@@ -199,6 +190,7 @@
                 is_main: 0,
                 is_new: true,
             });
+            console.log(file);
             if (oldFile.is_main) this.toggleMainPicture(this.files.length - 1);
             this.edit = false;
         },
