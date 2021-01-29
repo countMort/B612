@@ -7,7 +7,7 @@
             </v-col>
             <v-col cols="12" md="6">
                 <no-ssr>
-                    <gallery v-on:image-url="setImage" />
+                    <gallery @image-1="setImage" />
                 </no-ssr>
             </v-col>
             <v-col cols="12" md="6">
@@ -39,7 +39,7 @@ if (process.client) {
 }
 import gallery from '@/components/editor/Upload'
 // import TextEditor from '@/components/editor/TextEditor'
-import Editor from "@/components/Editor";
+import Editor from "@/components/editor";
 // import TextEditor from './TextEditor'
 export default {
     props: {

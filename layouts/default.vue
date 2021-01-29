@@ -2,8 +2,6 @@
   <v-app dark>
     <v-navigation-drawer
       v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
       fixed
       app
     >
@@ -25,31 +23,87 @@
       </v-list>
     </v-navigation-drawer>
     <v-app-bar
-      :clipped-left="clipped"
+      :clipped-left="true"
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
+        <v-icon>
+          mdi-light-switch
+        </v-icon>
+      </v-app-bar-nav-icon>
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <!-- <template v-slot:extension>
+        <template>
+          <v-btn color="transparent" class="mt-2 btns" nuxt to="/Login">
+            ورود
+            <v-icon class="mr-2" size="15">
+              mdi-account
+            </v-icon>
+          </v-btn>
+          <v-btn color="transparent" class="mt-2 btns" nuxt to="/Signup">
+            عضویت
+            <v-icon class="mr-2" size="15">
+            mdi-account-plus
+            </v-icon>
+          </v-btn>
+        </template>
+      </template> -->
+      <template v-slot:extension>
+          <template v-if="!$store.state.auth.loggedIn">
+            <v-btn color="transparent" class="mt-2 btns" nuxt to="/Login">
+              ورود
+              <v-icon>
+                mdi-account
+              </v-icon>
+            </v-btn>
+            <v-btn color="transparent" class="mt-2 btns" nuxt to="/Signup">
+              عضویت
+              <v-icon>
+              mdi-account-plus
+              </v-icon>
+            </v-btn>
+          </template>
+          <template v-if="$store.state.auth.loggedIn">
+            <v-btn nuxt to="/address" color="transparent" class="mt-2 btns">
+              <v-icon>mdi-truck-delivery-outline</v-icon>
+              &nbsp;{{$store.state.auth.user.address ? $store.state.auth.user.address.fullName : 'به کجا ارسال شود'}}
+            </v-btn>
+            <v-btn nuxt to="/orders" color="transparent" class="mt-2 btns">
+            <v-icon>mdi-newspaper-variant</v-icon>
+            &nbsp;سفارشات من
+            </v-btn>
+          </template>
+        </template>
+        <v-spacer></v-spacer>
+        <v-tooltip v-if="$store.state.auth.loggedIn" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              nuxt
+              to="/Profile"
+              icon
+            >
+            <v-icon>mdi-account-cog</v-icon>
+            </v-btn>
+          </template>
+          <span>ویرایش پروفایل</span>
+        </v-tooltip>
+        <v-tooltip v-if="$store.state.auth.loggedIn" bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              @click="logout"
+              icon
+            >
+            <v-icon>mdi-door-closed</v-icon>
+            </v-btn>
+          </template>
+          <span>خروج</span>
+        </v-tooltip>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -86,7 +140,6 @@ import { EventBus } from '@/utils/event-bus'
 export default {
   data () {
     return {
-      clipped: false,
       drawer: false,
       fixed: false,
       snackbar: {
@@ -104,17 +157,16 @@ export default {
       items: [
         {
           icon: 'mdi-apps',
-          title: 'Welcome',
+          title: 'B-612',
           to: '/'
         },
         {
           icon: 'mdi-chart-bubble',
-          title: 'Inspire',
+          title: 'سفارش دهید',
           to: '/inspire'
         }
       ],
-      miniVariant: false,
-      title: 'Vuetify.js'
+      title: 'B-612'
     }
   } ,
   created() {
@@ -129,7 +181,7 @@ export default {
         this.snackbar.multiLine = data.multiLine;
         this.snackbar.vertical = data.vertical;
         if (data.color == "red") this.snackbar.icon = "mdi-alert";
-        else if (data.color == "green") this.snackbar.icon = "mdi-check";
+        else if (data.color == "green" || data.color == "success") this.snackbar.icon = "mdi-check";
       }
       this.snackbar_show = true;
     });

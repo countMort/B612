@@ -1,72 +1,90 @@
 <template>
     <div class="upload-file-drag">
-        <v-card outlined>
-        <v-subheader
-            >لطفا عکس دلخواهتان را وارد کنید</v-subheader
-        >
-        <v-card-text>
-            <v-row class="px-5">
-            <v-col
-                class="col-12 col-sm-6 col-sm-4 relative"
-                v-for="(file, i) in files"
-                :key="i"
-            >
-                <v-img
-                class="pointer"
-                @click="toggleMainPicture(i)"
-                :src="file.url || file.path"
-                aspect-ratio="1.7"
-                ></v-img>
-                <div
-                class="d-flex align-center px-2"
-                style="
-                    background: white;
-                    width: 100%;
-                    border: 1px solid #d4d4d4;
-                    border-bottom-left-radius: 5px;
-                    border-bottom-right-radius: 5px;
-                    border-top: none;
-                "
-                >
-                <v-btn
-                    color="primary"
-                    rounded
-                    x-small
-                    depressed
-                    v-if="file.is_main"
-                    >عکس شاخص</v-btn
-                >
-                <v-spacer></v-spacer>
-                <v-btn @click="previewImage(file)" small icon color="grey">
-                    <v-icon size="17">mdi-image-search-outline</v-icon>
-                </v-btn>
-                <v-btn @click="remove(file, i)" small icon color="red">
-                    <v-icon size="17">mdi-delete</v-icon>
-                </v-btn>
-                </div>
-            </v-col>
-            <v-col class="col-12 pb-0">
-                <file-upload
-                extensions="gif,jpg,jpeg,png,webp"
-                accept="image/png, image/jpeg, image/webp"
-                class="full-width"
-                v-model="files"
-                ref="upload"
-                @input-file="inputFile"
-                @input-filter="inputFilter"
-                :multiple='false'
-                >
-                    <v-file-input
-                        outlined
-                        dense
-                        prepend-icon
-                        append-icon="mdi-cloud-upload"
-                        placeholder="انتخاب عکس"
-                    ></v-file-input>
-                </file-upload>
-            </v-col>
-            </v-row>
-        </v-card-text>
+        <v-card flat class="text-center">
+            <v-card-title v-if="label" class="caption justify-center py-0" v-html="label">
+                <slot name="label"></slot>
+            </v-card-title>
+            <v-card-text>
+                <v-row class="px-5">
+                    <template v-if="files.length !== 0">
+                        <v-col
+                        class="col-12 col-md-4 relative mx-auto"
+                        v-for="(file, i) in files"
+                        :key="i"
+                        >
+                            <v-img
+                            class="pointer mx-auto"
+                            @click="previewImage(file)"
+                            :src="file.url || file.path"
+                            aspect-ratio="1"
+                            :max-width="mini ? 60 : 100"
+                            ></v-img>
+                                <v-spacer></v-spacer>
+                            <!-- <v-btn @click="previewImage(file)" small icon color="grey">
+                                <v-icon size="17">mdi-image-search-outline</v-icon>
+                            </v-btn> -->
+                            <v-btn @click="remove(file, i)" :small="!mini" :x-small="mini" icon color="red">
+                                <v-icon :size="mini ? 10 : 15">mdi-delete</v-icon>
+                            </v-btn>
+                        </v-col>
+                    </template>
+                    <template v-if="files.length === 0 && filesPath[0] && filesPath[0].path">
+                        <v-col
+                        class="col-12 col-md-4 relative mx-auto"
+                        v-for="(file, i) in filesPath"
+                        :key="i"
+                        >
+                            <v-img
+                            class="pointer mx-auto"
+                            @click="previewImage(file)"
+                            :src="file.url || file.path"
+                            aspect-ratio="1"
+                            :max-width="mini ? 60 : 100"
+                            ></v-img>
+
+                        </v-col>
+                    </template>
+                <v-col class="col-12 pb-0">
+                    <v-row justify="center" v-if="(!this.files || this.files.length === 0) && (!filesPath[0] || !filesPath[0].path)">
+                        <v-col class="cols-12">
+                            <v-icon :size="mini ? 20 : 40" color="grey">mdi-image-plus</v-icon>
+                        </v-col>
+                        <v-col class="col-12 text-center">
+                            <span class="grey--text ml-3" :class="mini ? 'subtitle-2' : 'title'">فایل خود را بکشید و اینجا رها کنید</span>
+                        </v-col>
+                        <br v-if="!mini">
+                        <span v-if="!mini" :class="mini ? 'caption' : 'subtitle-1'">- یا -</span>
+                    </v-row>
+                    <file-upload
+                    :drop="true"
+                    extensions="gif,jpg,jpeg,png,webp"
+                    accept="image/png, image/jpeg, image/webp"
+                    class="full-width"
+                    v-model="files"
+                    :ref="`upload${num}`"
+                    :input-id="num.toString()"
+                    @input-file="inputFile"
+                    @input-filter="inputFilter"
+                    :multiple='false'
+                    >
+                        <v-file-input
+                            outlined
+                            dense
+                            :value="files[0] && files[0].file"
+                            :rules="rules"
+                            :error.sync="error"
+                            prepend-icon
+                            append-icon="mdi-cloud-upload-outline"
+                            :class="mini ? '_mini' :'_big'"
+                            class="_text _input"
+                            clear-icon=""
+                            :placeholder="!mini ? 'از دستگاه خود انتخاب کنید' : ''"
+                        >
+                        </v-file-input>
+                    </file-upload>
+                </v-col>
+                </v-row>
+            </v-card-text>
         </v-card>
         <!-- Dialog -->
         <v-dialog @click:outside="closeEditDialog()" v-model="edit" width="600" persistent>
@@ -82,18 +100,6 @@
             <v-card-text class="pt-5">
             <div class="edit-image" v-if="files.length">
                 <img ref="editImage" :src="files[files.length - 1].url" />
-            </div>
-
-            <div v-if="files.length">
-                <v-checkbox
-                hide-details
-                class="_input _text"
-                color="primary"
-                v-model="files[files.length - 1].is_main"
-                :true-value="1"
-                :false-value="0"
-                label="تعیین به عنوان عکس شاخص"
-                ></v-checkbox>
             </div>
             </v-card-text>
             <v-divider></v-divider>
@@ -125,6 +131,24 @@
 
     export default {
     props: {
+        rules: {
+            type: Array
+        } ,
+        filesPath: {
+            type: Array ,
+            default : () => []
+        } ,
+        mini: {
+            type: Boolean ,
+            default: false
+        } ,
+        label: {
+            type: String
+        } ,
+        num: {
+            type: Number ,
+            default: 1
+        }
     },
     components: {
         FileUpload,
@@ -138,6 +162,7 @@
         filesToRemove: [],
         edit: false,
         cropper: false,
+        error: null
         };
     },
     watch: {
@@ -151,6 +176,11 @@
                 viewMode: 0,
                 autoCropArea: 0.8,
                 background: false,
+                fillColor: 'white',
+                imageSmoothingEnabled: true,
+                maxWidth: 3072,
+                maxHeight: 3072,
+                imageSmoothingQuality: 'high'
             });
             this.cropper = cropper;
             });
@@ -162,7 +192,11 @@
         }
         },
         files(v) {
-            this.$emit('image-url' , v.length > 0 ?  v[0].url || v[0].path  : null)
+            // console.log(v);
+            this.$emit('on-image' , v.length > 0 ?  v  : [{}])
+        } ,
+        error(v) {
+            this.$emit('on-error' , v)
         }
     },
     methods: {
@@ -170,7 +204,7 @@
             window.open(file.path || file.url, "_blank");
         },
         closeEditDialog() {
-            this.$refs.upload.remove(this.files[this.files.length - 1]);
+            this.$refs[`upload${this.num}`].remove(this.files[this.files.length - 1]);
             this.edit = false;
         },
         editSave() {
@@ -183,23 +217,13 @@
                 arr[i] = binStr.charCodeAt(i);
             }
             let file = new File([arr], oldFile.name, { type: oldFile.type });
-            this.$refs.upload.update(oldFile.id, {
+            this.$refs[`upload${this.num}`].update(oldFile.id, {
                 file,
                 type: file.type,
                 size: file.size,
-                is_main: 0,
                 is_new: true,
             });
-            console.log(file);
-            if (oldFile.is_main) this.toggleMainPicture(this.files.length - 1);
             this.edit = false;
-        },
-        toggleMainPicture(i) {
-            this.files.forEach((file) => {
-                file.is_main = 0;
-            });
-
-            this.files[i].is_main = 1;
         },
         inputFilter(newFile, oldFile, prevent) {
         if (newFile && !oldFile) {
@@ -229,16 +253,16 @@
         }
         },
         doUpload() {
-        var findIsMain = this.files.find((o) => o.is_main == 1);
+        // var findIsMain = this.files.find((o) => o.is_main == 1);
         for (let i = 0; i < this.files.length; i++) {
             const file = this.files[i];
-            if (!findIsMain) {
+            // if (!findIsMain) {
+            // setTimeout(() => {
+            //     this.files[0].is_main = 1;
+            // }, 100);
+            // }
             setTimeout(() => {
-                this.files[0].is_main = 1;
-            }, 100);
-            }
-            setTimeout(() => {
-            this.$refs.upload.update(file, {
+            this.$refs[`upload${this.num}`].update(file, {
                 active: true,
             });
             // this.$refs.upload.active = true;
@@ -255,7 +279,7 @@
             return;
         }
 
-        this.$refs.upload.remove(file);
+        this.$refs[`upload${this.num}`].remove(file);
         },
         uploadFile(newFile, oldFile) {
         // if (newFile && !oldFile) {
@@ -324,5 +348,10 @@
 .edit-image {
     min-height: 250px;
     max-height: 350px;
+}
+.v-file-input__text.v-file-input__text--placeholder {
+    width: 100%;
+    padding-right: 20px;
+    justify-content: center;
 }
 </style>

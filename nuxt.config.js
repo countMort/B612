@@ -1,6 +1,6 @@
 import colors from 'vuetify/es5/util/colors'
 import fa from 'vuetify/es5/locale/fa'
-
+const URL = "http://localhost:4000"
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -19,7 +19,7 @@ export default {
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
     "@/assets/fonts/iransans/css/fontiran.css" ,
-    '~/assets/variables.scss' ,
+    '~/assets/variables.scss'
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
@@ -42,10 +42,21 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/auth-next',
+    '@nuxtjs/proxy'
+    // '@tui-nuxt/editor'
   ],
 
+
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
-  axios: {},
+  axios: {
+    proxy : true ,
+    baseURL : URL
+  },
+
+  proxy : {
+    "/api" : URL
+  } ,
 
   // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
   vuetify: {
@@ -54,7 +65,7 @@ export default {
       locales: { fa },
       current: 'fa',
     },
-    customVariables: ['~/assets/variables.scss'],
+    // customVariables: ['~/assets/variables.scss'],
     theme: {
       dark: true,
       themes: {
@@ -86,5 +97,46 @@ export default {
     //     })
     //   }
     // }
+  } ,
+  
+  server: {
+    port : process.env.PORT || 8000
+  },
+
+  auth: {
+    
+    strategies: {
+      local: {
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post', propertyName: 'token' },
+          logout: { url: '/api/auth/logout', method: 'post' },
+          user: { url: '/api/auth/user', method: 'get', propertyName: 'user' }
+        }
+      }
+    } ,
+    // strategies: {
+    //   local: {
+    //     token: {
+    //       property: 'token',
+    //       // required: true,
+    //       // type: 'Bearer'
+    //     },
+    //     user: {
+    //       property: 'user',
+    //       // autoFetch: true
+    //     },
+    //     endpoints: {
+    //       login: { url: '/api/auth/login', method: 'post' },
+    //       logout: { url: '/api/auth/logout', method: 'post' },
+    //       user: { url: '/api/auth/user', method: 'get' }
+    //     }
+    //   }
+    // } ,
+    redirect: {
+      login: '/login',
+      logout: '/inspire',
+      callback: '/signup',
+      home: '/inspire'
+    }
   }
 }
