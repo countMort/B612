@@ -186,5 +186,10 @@ export default {
       this.snackbar_show = true;
     });
   },
+  methods: {
+    logout() {
+      this.$auth.logout()
+    }
+  },
 }
 </script>

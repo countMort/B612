@@ -1,6 +1,6 @@
 <template>
     <v-container fluid>
-        <v-card max-width="500" class="mx-auto" light>
+        <v-card max-width="500" class="mx-auto" light :loader-height="2" :loading="loading">
             <v-card-title
             class="lighten-2 justify-center"
             >
@@ -44,7 +44,7 @@
                                 </v-btn>
                             </v-col>
                             <v-col cols="6" class="text-center">
-                                <v-btn @click="submit">
+                                <v-btn :loading="loading" @click="submit">
                                     ورود
                                 </v-btn>
                             </v-col>
@@ -63,8 +63,8 @@
 <script>
     export default {
         // layout : "none" ,
-        // middleware : 'auth' ,
-        // auth : 'guest' ,
+        middleware : 'auth' ,
+        auth : 'guest' ,
         data () {
             return {
                 phone: '' ,
@@ -73,8 +73,8 @@
                 show : false ,
                 phoneRules : [
                     v => !!v || '',
-                    v => v.toString().startsWith("0") ? v.toString().length === 11 : v.toString().length === 10 || 'شماره تلفن همراه صحیح نیست'
-                ] 
+                    v => !v || v.toString().startsWith("0") ? (v && v.toString().length === 11) : (v && v.toString().length === 10) || 'شماره تلفن همراه صحیح نیست'
+                ] ,
             }
         } ,
         methods: {

@@ -1,11 +1,10 @@
 <template>
-    <v-card max-width="500" class="mx-auto" light>
+    <v-card max-width="500" class="mx-auto" light loader-height="2" :loading="loading">
         <v-card-title
         class="justify-center"
         >
             فرم ثبت نام
         </v-card-title>
-
         <v-card-text>
                 <v-form ref="form">
                     <v-text-field
@@ -67,7 +66,7 @@
                             </v-btn>
                         </v-col>
                         <v-col cols="6" class="text-center">
-                            <v-btn @click="submit">
+                            <v-btn @click="submit" :loading="loading">
                                 ثبت نام
                             </v-btn>
                         </v-col>
@@ -102,7 +101,7 @@
                 ] ,
                 phoneRules : [
                     v => !!v || '',
-                    v => v.toString().startsWith("0") ? v.toString().length === 11 : v.toString().length === 10 || 'شماره تلفن همراه صحیح نیست'
+                    v => !v || v.toString().startsWith("0") ? (v && v.toString().length === 11) : (v && v.toString().length === 10) || 'شماره تلفن همراه صحیح نیست'
                 ] ,
                 rePassRules : [
                     v => v===this.password || 'تکرار رمز صحیح نمی‌باشد'
@@ -150,8 +149,6 @@
             clear () {
                 this.$refs.form.reset()
                 this.loading = false
-                // this.select = null
-                // this.checkbox = false
             }
         }
     }
