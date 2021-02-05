@@ -20,14 +20,14 @@
                                 آیا ما اطلاعات بیشتری برای یافتن این آدرس نیاز داریم؟
                             </v-expansion-panel-header>
                             <v-expansion-panel-content>
-                                <v-textarea class="pt-1" v-model="deliverInstructions" dense outlined label="افزودن توضیحات ارسال" />
+                                <v-textarea v-model="deliverInstructions" dense outlined label="افزودن توضیحات ارسال" />
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-expansion-panels>
                 </v-card-text>
                 <v-card-actions>
                     <v-row justify=space-around>
-                        <v-btn :loading="loading" @click="submit" dark class="green px-7 mb-2">
+                        <v-btn :loading="loading" @click="submit" dark class="success px-7 mb-2">
                             ثبت آدرس
                         </v-btn>
                         <v-btn @click="clear">
@@ -75,7 +75,7 @@
                         state : this.state ,
                         phoneNumber : this.phoneNumber ,
                         deliverInstructions : this.deliverInstructions ,
-                        streetAddress : this.streetAddress1 + " " + this.streetAddress2
+                        streetAddress : this.streetAddress
                         }
                         this.loading = true
                         let response = await this.$axios.$post("/api/addresses" , data)

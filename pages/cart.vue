@@ -41,7 +41,7 @@
                                 </template>
                                 <v-row class="mt-1">
                                     <v-btn @click="$store.commit('removeProduct' , product)" text color="red accent-4"><v-icon>mdi-trash-can-outline</v-icon>&nbsp;حذف از سبد</v-btn>
-                                <overlay :product="product" :change="true" />
+                                <!-- <overlay :product="product" :change="true" /> -->
                                 </v-row>
                         </v-banner>
                     </v-card-text>
@@ -56,11 +56,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import overlay from "~/components/overlay"
+// import overlay from "~/components/overlay"
 import sideBar from "~/components/side-bar"
     export default {
         components: {
-            overlay,
+            // overlay,
             sideBar
         },
         computed: {

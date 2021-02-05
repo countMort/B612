@@ -28,7 +28,7 @@
                 </v-row>
 
                 <div class="my-4 subtitle-1 black--text">
-                {{product.price}} تومان• {{product.owner.name}}, {{product.category.type}}
+                {{product.price}} تومان• {{product.owner.name}}, {{product.category.name}}
                 </div>
 
                 <div>{{product.description}}</div>

@@ -1,47 +1,42 @@
 <template>
     <v-container fluid>
-        <v-row justify=center>
-            <v-col cols=9>
-                <v-form ref="form">
-                    <v-card :loading=loading class="full-width">
-                    <v-card-title id="card-title" class="text-center">
-                        <v-main>
+        <v-form ref="form">
+            <v-card light :loading=loading class="full-width mx-auto" max-width="400">
+                <v-card-title class="justify-center">
+                        به روز رسانی آدرس
+                </v-card-title>
+                <v-card-text>
+                    <v-text-field dense label="نام کامل" outlined v-model="address.fullName" />
+                    <v-select dense label="استان" outlined v-model="address.state"  :items=states />
+                    <v-select dense  outlined v-model="address.city" label="شهر" :items=cities />
+                    <v-text-field dense label="آدرس کافی" outlined v-model="address.streetAddress" />
+                    <!-- <v-text-field dense label="پلاک - واحد - زنگ" outlined v-model="address.streetAddress2" /> -->
+                    <v-text-field dense label="کد پستی" persistent-hint hint="اختیاری" outlined type="number" v-model="address.zipCode" />
+                    <v-text-field dense label="تلفن" type="number" outlined v-model="address.phoneNumber" />
+                    <v-divider class="mb-4"></v-divider>
+                    <v-expansion-panels flat popout hover tile>
+                        <v-expansion-panel>
+                            <v-expansion-panel-header>
+                                آیا ما اطلاعات بیشتری برای یافتن این آدرس نیاز داریم؟
+                            </v-expansion-panel-header>
+                            <v-expansion-panel-content>
+                                <v-textarea v-model="address.deliverInstructions" dense outlined label="افزودن توضیحات ارسال" />
+                            </v-expansion-panel-content>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
+                </v-card-text>
+                <v-card-actions>
+                    <v-row justify=space-around>
+                        <v-btn :loading="loading" @click="submit" dark class="success px-7 mb-2">
                             به روز رسانی آدرس
-                        </v-main>
-                    </v-card-title>
-                    <v-card-text>
-                        <v-text-field dense label="نام کامل" outlined v-model="fullName" :placeholder="singleAddress.fullName" />
-                        <v-select dense label="استان" outlined v-model="state" :placeholder="singleAddress.state" :items=states />
-                        <v-select dense  outlined v-model="city" label="شهر" :items=cities :placeholder="singleAddress.city" />
-                        <v-text-field dense label="بلوار - خیابان - کوچه" outlined :placeholder="singleAddress.streetAddress" v-model="streetAddress1" />
-                        <v-text-field dense label="پلاک - واحد - زنگ" outlined v-model="streetAddress2" />
-                        <v-text-field dense label="کد پستی" persistent-hint hint="اختیاری" :placeholder="singleAddress.zipCode" outlined type="number" v-model="zipCode" />
-                        <v-text-field dense label="تلفن" type="number" outlined :placeholder="singleAddress.phoneNumber.toString()" v-model="phoneNumber" />
-                        <hr>
-                        <br>
-                        <h3 class="black--text">
-                            افزودن توضیحات ارسال
-                        </h3>
-                        <br>
-                        <v-flex>
-                            آیا ما اطلاعات بیشتری برای یافتن این آدرس نیاز داریم؟
-                        </v-flex>
-                        <v-textarea class="pt-1" :placeholder="singleAddress.deliverInstructions" v-model="deliverInstructions" dense outlined label="اطلاعات بیشتر" />
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-row justify=center>
-                            <v-btn @click="submit" class="primary">
-                                به روز رسانی آدرس
-                            </v-btn>
-                            <v-btn @click="clear">
-                                پاک کردن فرم
-                            </v-btn>
-                        </v-row>
-                    </v-card-actions>
-                </v-card>
-                </v-form>
-            </v-col>
-        </v-row>
+                        </v-btn>
+                        <v-btn @click="clear">
+                            پاک کردن فرم
+                        </v-btn>
+                    </v-row>
+                </v-card-actions>
+            </v-card>
+        </v-form>
     </v-container>
 </template>
 
@@ -51,7 +46,7 @@
             try {
                 let response = await $axios.$get(`/api/addresses/${params.id}`)
                 return {
-                    singleAddress : response.address
+                    address : response.address
                 }
             } catch (error) {
                 console.log(error.response.data.message);
@@ -59,14 +54,6 @@
         } ,
         data() {
             return {
-                city : "" ,
-                fullName : "" ,
-                zipCode : "" ,
-                state : "" ,
-                phoneNumber : "" ,
-                deliverInstructions : "" ,
-                streetAddress1 : "" ,
-                streetAddress2 : "" ,
                 cities : ["مشهد"] ,
                 states : ["خراسان رضوی"] ,
                 loading : false
@@ -77,15 +64,7 @@
                 try {
                     if(this.$refs.form.validate()) {
                         this.loading = true
-                        let data = {
-                        city : this.city ,
-                        fullName : this.fullName ,
-                        zipCode : this.zipCode ,
-                        state : this.state ,
-                        phoneNumber : this.phoneNumber ,
-                        deliverInstructions : this.deliverInstructions ,
-                        streetAddress : this.streetAddress1 + " " + this.streetAddress2
-                        }
+                        let data = this.address
                         let response = await this.$axios.$put(`/api/addresses/${this.$route.params.id}` , data)
                         if(response.success) {
                             this.$store.dispatch('notif' , {msg : response.message , type : 'success'})
@@ -108,7 +87,4 @@
 </script>
 
 <style scoped>
-#card-title {
-    font-size: 18px;
-}
 </style>

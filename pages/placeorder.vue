@@ -237,7 +237,7 @@ import { mapGetters } from "vuex"
                     })
                     if (response.success) {
                         this.loading = false
-                        this.$nuxt.$router.push("/home")
+                        this.$nuxt.$router.push("/")
                         this.$store.commit("clearCart")
                         this.$store.dispatch('notif' , {msg : response.message , type : 'success'})
                     }

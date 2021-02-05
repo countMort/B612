@@ -75,8 +75,10 @@ export default {
           secondary: colors.amber.darken3,
           info: colors.teal.lighten1,
           warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          // error: colors.deepOrange.accent4,
+          // success: colors.green.accent3 ,
+          error: '#FF5252',
+          success: '#4CAF50',
         }
       }
     }
@@ -134,9 +136,9 @@ export default {
     // } ,
     redirect: {
       login: '/login',
-      logout: '/inspire',
+      logout: '/',
       callback: '/signup',
-      home: '/inspire'
+      home: '/'
     }
   }
 }

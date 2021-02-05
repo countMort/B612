@@ -106,7 +106,7 @@
             <v-card-actions class="justify-center">
             <v-btn
                 @click.prevent="editSave"
-                color="green"
+                color="success"
                 rounded
                 small
                 dark

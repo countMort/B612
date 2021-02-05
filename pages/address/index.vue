@@ -23,19 +23,19 @@
                             <br>
                             <span v-if="$store.state.auth.user.address.zipCode">
                                 کدپستی: {{$store.state.auth.user.address.zipCode}}
+                                <br>
                             </span>
-                            <br>
                             <span v-if="$store.state.auth.user.address.deilveryIstructions">
                                 <hr>
                                 {{$store.state.auth.user.address.deilveryIstructions}}
                             </span>
-                                تلفن:&nbsp;{{$store.state.auth.user.address.phoneNumber}}
+                                تلفن:&nbsp;0{{$store.state.auth.user.address.phoneNumber}}
                             <span v-if="$store.state.auth.user.address.deliverInstructions">
                                 <hr>
                                 توضیحات:&nbsp;{{$store.state.auth.user.address.deliverInstructions}}
                             </span>
                         <hr>
-                        <v-btn class="indigo--text" disabled text> <v-icon>mdi-home</v-icon> &nbsp;آدرس پیش فرض</v-btn>
+                        <v-btn disabled text> <v-icon>mdi-home</v-icon> &nbsp;آدرس پیش فرض</v-btn>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -81,15 +81,15 @@
                             کدپستی: {{address.zipCode}}
                         </span>
                         <br>
-                        تلفن:&nbsp;{{address.phoneNumber}}
+                        تلفن:&nbsp;0{{address.phoneNumber}}
                         <span v-if="address.deliverInstructions">
                             <hr>
                             {{address.deliverInstructions}}
                         </span>
                         <hr>
-                        <v-btn class="indigo--text" :to="`/address/${address._id}`" nuxt text>ویرایش</v-btn>
-                        <v-btn class="indigo--text" @click="onDeleteAddress(address._id , index)" nuxt text>حذف</v-btn>
-                        <v-btn class="indigo--text" @click="onSetDefault(address._id)" nuxt text> <v-icon>mdi-home</v-icon> &nbsp;آدرس پیش فرض</v-btn>
+                        <v-btn :to="`/address/${address._id}`" nuxt text>ویرایش</v-btn>
+                        <v-btn @click="onDeleteAddress(address._id , index)" nuxt text>حذف</v-btn>
+                        <v-btn @click="onSetDefault(address._id)" nuxt text> <v-icon>mdi-home</v-icon> &nbsp;آدرس پیش فرض</v-btn>
                     </v-card-text>
                 </v-card>
             </v-col>

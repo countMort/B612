@@ -4,10 +4,30 @@
       v-model="drawer"
       fixed
       app
+      clipped
+      :mobile-breakpoint="800"
     >
+      <v-row class="mt-2">
+        <v-btn
+        text
+        to="/cart"
+        :class="getCartLength > 0 && 'buzz'"
+        class="mt-2 white--text mx-auto">
+          <v-badge overlap :badge="getCartLength" left>
+            <template v-slot:badge>
+              {{getCartLength}}
+            </template>
+            <v-icon>mdi-cart-outline</v-icon>
+            سبد خرید
+          </v-badge>
+        </v-btn>
+        <!-- <v-avatar v-for="product in getCart" :key="product._id" size="40" >
+              <img :src="product.photo">
+        </v-avatar> -->
+      </v-row>
       <v-list>
         <v-list-item
-          v-for="(item, i) in items"
+          v-for="(item, i) in routes"
           :key="i"
           :to="item.to"
           router
@@ -27,10 +47,12 @@
       fixed
       app
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer">
-        <v-icon>
-          mdi-light-switch
-        </v-icon>
+      <v-app-bar-nav-icon>
+        <v-btn icon nuxt to="/">
+          <v-icon>
+            mdi-light-switch
+          </v-icon>
+        </v-btn>
       </v-app-bar-nav-icon>
       <v-toolbar-title v-text="title" />
       <v-spacer />
@@ -104,6 +126,11 @@
           </template>
           <span>خروج</span>
         </v-tooltip>
+        <v-btn icon @click.stop="drawer = !drawer">
+          <v-icon>
+            mdi-dots-vertical
+          </v-icon>
+        </v-btn>
     </v-app-bar>
     <v-main>
       <v-container>
@@ -127,8 +154,8 @@
       </v-container>
     </v-main>
     <v-footer
-      :absolute="!fixed"
       app
+      absolute
     >
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
@@ -137,11 +164,12 @@
 
 <script>
 import { EventBus } from '@/utils/event-bus'
+import routeGenerator from '@/routes'
+import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
       drawer: false,
-      fixed: false,
       snackbar: {
         text: "",
         bottom: true,
@@ -154,22 +182,9 @@ export default {
         vertical: false,
       },
       snackbar_show: false ,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'B-612',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'سفارش دهید',
-          to: '/inspire'
-        }
-      ],
+      routes: [],
       title: 'B-612'
     }
-  } ,
-  created() {
   } ,
   mounted () {
     EventBus.$on("setSnack", (data) => {
@@ -185,6 +200,10 @@ export default {
       }
       this.snackbar_show = true;
     });
+    this.routes = routeGenerator(this.$auth.user.role)
+  },
+  computed: {
+    ...mapGetters(["getCartLength" , "getCart"])
   },
   methods: {
     logout() {

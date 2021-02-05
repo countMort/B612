@@ -28,7 +28,7 @@
         </v-col>
         <v-col cols=12 md=8 lg=5 class="mx-0 px-0">
             <v-card flat class="text-center">
-                <v-card-title class="justify-center">{{product.title}}</v-card-title>
+                <v-card-title class="justify-center">{{product.name}}</v-card-title>
                 <v-card-text>
                     <v-row class="justify-center" v-if="product.averageRating">
                     <v-rating
@@ -44,7 +44,7 @@
                     </v-row>
 
                     <div class="my-4 subtitle-1 black--text">
-                    {{product.price}} تومان • {{product.owner.name}} 
+                    {{product.price}} تومان
                     </div>
 
                     <div>{{product.description}}</div>
@@ -123,7 +123,7 @@ import reviewSection from "~/components/review-section"
         async deleteProduct() {
             try {
                 let result = await this.$axios.$delete(`/api/products/${this.$route.params.id}`)
-                result.success ? this.$nuxt.$router.push('/home') : ''
+                result.success ? this.$nuxt.$router.push('/') : ''
             } catch (error) {
                 console.log(error);
             }
@@ -141,17 +141,14 @@ import reviewSection from "~/components/review-section"
             return [
             {
             text : "صفحه اصلی" ,
-            href : "/home" ,
+            href : "/" ,
             nuxt : true
         } ,
         {
-            text : this.product.owner.name
+            text : this.product.category.name
         },
         {
-            text : this.product.category.type
-        },
-        {
-            text : this.product.title
+            text : this.product.name
         }
         ]
         }

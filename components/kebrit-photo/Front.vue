@@ -74,7 +74,7 @@
                         </span>
                     </template>
                 </v-checkbox>
-                <v-btn @click="addToStore" small color="green">
+                <v-btn @click="addToStore" small color="success">
                     ذخیره
                 </v-btn>
             </v-col>

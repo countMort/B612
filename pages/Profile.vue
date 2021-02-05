@@ -31,7 +31,7 @@
                                 v-model="phone"
                                 suffix="98+"
                                 dir="ltr"
-                                :placeholder="$store.state.auth.user.phone"
+                                :placeholder="$store.state.auth.user.phone.toString()"
                                 outlined
                                 :prepend-icon="!phoneChange ? 'mdi-pen' : 'mdi-circle'"
                                 @click:prepend="phoneChange = !phoneChange"
@@ -57,7 +57,7 @@
                     </v-form>
                     <v-row>
                         <v-col cols="12" class="text-center">
-                            <v-btn @click="submit">
+                            <v-btn :loading="loading" class="success" @click="submit">
                                 ویرایش اطلاعات
                             </v-btn>
                         </v-col>
@@ -105,11 +105,11 @@
                             password : this.password
                         }
                     let response = await this.$axios.$put('/api/auth/user' , data)
-                    if(response.success) {
-                        this.name = "" ;
-                        this.phone = "" ;
-                        this.password = "" ;
-                    }
+                    // if(response.success) {
+                    //     this.name = "" ;
+                    //     this.phone = "" ;
+                    //     this.password = "" ;
+                    // }
                     await this.$auth.fetchUser() ;
                     this.loading = false
                     this.$store.dispatch('notif' , {msg : response.message , type : 'success'})
