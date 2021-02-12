@@ -6,7 +6,7 @@ const adminRoutes = [
         to: "/admin/products"
     } ,
     {
-        icon: '' ,
+        icon: 'mdi-shape-outline' ,
         title: "مدیریت دسته‌بندی ها" ,
         to: "/admin/add-category"
     } ,

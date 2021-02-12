@@ -6,7 +6,6 @@
             >
                 ورود
             </v-card-title>
-
             <v-card-text>
                     <v-form ref="form">
                         <v-text-field
@@ -61,6 +60,7 @@
 </template>
 
 <script>
+import { EventBus } from "@/utils/event-bus"
     export default {
         // layout : "none" ,
         middleware : 'auth' ,
@@ -92,9 +92,20 @@
                                 password : this.password
                             }
                         })
+                        // if (result.data.success) {
+                        //     EventBus.$emit("setSnack" , {
+                        //         text : result.data.message ,
+                        //         color: "green"
+                        //     })
+                        // }
+                        this.loading = true
                     } catch (error) {
                         this.loading = false
-                        console.log(error.response);
+                        console.log(error.response || error);
+                        error.response && EventBus.$emit("setSnack" , {
+                            text : error.response.data.message ,
+                            color: "red"
+                        })
                     }
                 }
             },

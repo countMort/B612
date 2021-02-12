@@ -54,6 +54,7 @@
         async asyncData({$axios}) {
             try {
                 let response = await $axios.$get("/api/orders")
+                console.log(response);
                 if(response.success) {
                     let orders = response.orders.reverse()
                     return {

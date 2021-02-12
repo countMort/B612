@@ -7,18 +7,18 @@
     <v-row class="mx-1 px-1">
         <v-breadcrumbs class="mx-0 px-0" :items="breadcrumbs">
             <template v-slot:item="{ item }">
-            <v-breadcrumbs-item
-                nuxt
-                :to="item.href"
-            >
-                {{ item.text.toUpperCase() }}
-            </v-breadcrumbs-item>
+                <v-breadcrumbs-item
+                    nuxt
+                    :to="item.href"
+                >
+                    {{ item.text.toUpperCase() }}
+                </v-breadcrumbs-item>
             </template>
         </v-breadcrumbs>
     </v-row>
     <v-row>
-        <v-col cols=12 md=4 lg=3 class="mx-0 px-0">
-            <v-card class="full-width" align=center flat>
+        <v-col cols=12 md=4 lg=3 class="mx-0 px-0 py-0">
+            <v-card tile class="full-width" align=center flat>
                 <v-img
                     max-width="25rem"
                     max-height="25rem"
@@ -26,28 +26,51 @@
                 ></v-img>
             </v-card>
         </v-col>
-        <v-col cols=12 md=8 lg=5 class="mx-0 px-0">
-            <v-card flat class="text-center">
+        <v-col cols=12 md=8 lg=9 class="mx-0 px-0 py-0">
+            <v-card style="height: 100%" flat tile class="text-center">
                 <v-card-title class="justify-center">{{product.name}}</v-card-title>
                 <v-card-text>
-                    <v-row class="justify-center" v-if="product.averageRating">
-                    <v-rating
-                        :value="Number(product.averageRating)"
-                        color="amber"
-                        half-increments
-                        dense
-                        size="14"
-                        readonly
-                    ></v-rating>
-
-                    <div class="grey--text ml-4">{{product.averageRating}} ({{product.reviews.length}})</div>
+                    <v-row class="mx-0 mb-1 justify-center">
+                        <v-rating
+                            :value="Number(product.averageRating)"
+                            color="amber"
+                            half-increments
+                            dense
+                            size="14"
+                            readonly
+                        >
+                        </v-rating>
+                        <div class="grey--text">{{product.averageRating}} ({{product.reviews.length}})</div>
                     </v-row>
-
-                    <div class="my-4 subtitle-1 black--text">
-                    {{product.price}} تومان
-                    </div>
-
-                    <div>{{product.description}}</div>
+                    <v-list>
+                        <v-list-item three-line>
+                            <v-list-item-content>
+                                <v-list-item-title>دسته‌بندی:&nbsp;{{product.category.name}}</v-list-item-title>
+                                <v-list-item-subtitle>{{product.price}}&nbsp; تومان</v-list-item-subtitle>
+                                <v-list-item-subtitle v-if="product.description">{{product.description}}</v-list-item-subtitle>
+                            </v-list-item-content>
+                            <v-list-item-avatar class="mt-12" icon size="100">
+                                <v-tooltip top>
+                                    <template v-slot:activator="{on , attrs}">
+                                        <v-progress-circular
+                                        v-bind="attrs"
+                                        v-on="on"
+                                        size="80"
+                                        color="teal"
+                                        width="13"
+                                        :value="product.aboveMiddle"
+                                        rotate="180"
+                                        >
+                                            {{product.aboveMiddle}}%
+                                        </v-progress-circular>
+                                    </template>
+                                    <span class="teal--text">
+                                        به این محصول بالای 3.5 از 5 داده اند
+                                    </span>
+                                </v-tooltip>
+                            </v-list-item-avatar>
+                        </v-list-item>
+                    </v-list>
                 </v-card-text>
 
                 <v-divider class="mx-4"></v-divider>
@@ -56,24 +79,27 @@
                         <v-btn nuxt :to="'/admin/products/'+product._id" color="warning">به روز رسانی</v-btn>
                         <v-btn @click="deleteProduct" color="error">حذف</v-btn>
                     </div> -->
-                    <overlay :product=product />
+                    <v-row class="justify-space-between mx-0">
+                        <v-form ref="form">
+                            <v-text-field
+                            :rules="rule"
+                            outlined
+                            hide-details
+                            prepend-icon="mdi-light-switch"
+                            label="تعداد سفارش"
+                            type="number"
+                            v-model="quantity"></v-text-field>
+                        </v-form>
+                        <v-btn
+                        color="success"
+                        class="my-sm-auto my-2 mx-auto"
+                        @click="addProductToCart(product , quantity)"
+                        >
+                            افزودن به جعبه &nbsp;&nbsp;
+                            <v-icon>mdi-cart-outline</v-icon>
+                        </v-btn>
+                    </v-row>
                 </v-card-actions>
-            </v-card>
-        </v-col>
-        <v-col cols=12 lg=4>
-            <v-card v-if="product.aboveMiddle" class="full-width" align=center justify=center flat>
-                    <v-flex class="teal--text">
-                        درصد افرادی که به این محصول بالای 3.5 از 5 داده اند
-                    </v-flex>
-                    <v-progress-circular
-                    size="80"
-                    color="teal"
-                    width="13"
-                    :value="product.aboveMiddle"
-                    rotate="180"
-                    >
-                    {{product.aboveMiddle}}
-                    </v-progress-circular>
             </v-card>
         </v-col>
         <v-col cols=12 class="px-0">
@@ -86,12 +112,11 @@
 </template>
 
 <script>
-import overlay from "~/components/overlay"
 import reviewSection from "~/components/review-section"
+import { EventBus } from '~/utils/event-bus'
     export default {
         components: {
-        overlay,
-        reviewSection,
+            reviewSection,
         },
     async asyncData({$axios , params , store}) {
         try {
@@ -106,15 +131,27 @@ import reviewSection from "~/components/review-section"
                 reviews : reviewsResponse.reviews
             }
         } catch (error) {
-            console.log(error.response.data.message);
+            console.log(error.response && error.response.data.message);
         }
     },
     data: () => ({
         loading: false,
         selection: 1,
+        quantity: 0,
+        rule : [
+            v => !!v || "" ,
+            v => v > 0 || "" ,
+        ]
     }),
 
     methods: {
+        addProductToCart (product , quantity) {
+            if(this.$refs.form.validate()) {
+                this.$store.dispatch("addProductToCart" , {product : product , quantity : quantity})
+                EventBus.$emit("openNav")
+                this.$emit('on-add-dialog')
+            }
+        } ,
         reserve () {
             this.loading = true
 
@@ -139,18 +176,18 @@ import reviewSection from "~/components/review-section"
         } ,
         breadcrumbs() {
             return [
-            {
-            text : "صفحه اصلی" ,
-            href : "/" ,
-            nuxt : true
-        } ,
-        {
-            text : this.product.category.name
-        },
-        {
-            text : this.product.name
-        }
-        ]
+                {
+                    text : "صفحه اصلی" ,
+                    href : "/" ,
+                    nuxt : true
+                } ,
+                {
+                    text : this.product.category.name
+                },
+                {
+                    text : this.product.name
+                }
+            ]
         }
     },
     }

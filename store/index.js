@@ -14,7 +14,9 @@ export const state = () => ({
     popShow : false ,
     popMsg : '' ,
     popType : '' ,
-    cartWatched : []
+    cartWatched : [] ,
+    timer: 0 ,
+    hash: ""
 
 })
 
@@ -93,6 +95,12 @@ export const mutations = {
     cartWatchedPush (state , product) {
         state.cartWatched = state.cartWatched.filter(prod => prod._id !== product._id )
         state.cartWatched.unshift(product)
+    } ,
+    SET_TIMER(state , time) {
+        state.timer = time
+    } ,
+    SET_HASH(state , hash) {
+        state.hash = hash
     }
 }
 
@@ -112,7 +120,7 @@ export const actions = {
         setTimeout(function() {
             commit('pushEnd')
         }.bind(this), 4000)
-    }
+    } ,
 }
 
 export const getters = {
@@ -144,7 +152,7 @@ export const getters = {
     getCartTotalPriceWithShipping(state) {
         let total = 0
         state.cart.map(product => {
-            total =+ product.totalPrice
+            total += product.totalPrice
         })
         return total + state.shippingPrice
     } ,
@@ -159,5 +167,11 @@ export const getters = {
     } ,
     getCartWatched(state) {
         return state.cartWatched
+    } ,
+    getTimer(state) {
+        return state.timer
+    } ,
+    getHash(state) {
+        return state.hash
     }
 }

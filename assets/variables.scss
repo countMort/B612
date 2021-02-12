@@ -24,6 +24,11 @@ div .v-application {
     }
 }
 
+.v-application a {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
 .up_and_down {
     animation-name: up_and_down;
     animation-duration: 4s;

@@ -1,38 +1,41 @@
 <template>
-    <v-container fluid>
-        <v-row justify=space-around>
+    <div>
+        <v-row class="justify-space-around text-center">
             آدرس های شما
             <v-btn nuxt to="/address/add" text outlined>
+                <v-icon left>
+                    mdi-plus
+                </v-icon>
                 افزودن آدرس
             </v-btn>
         </v-row>
-        <v-row justify=space-around class="text-center">
-            <v-col v-if="$store.state.auth.user.address" cols=12 sm=6 md=6 lg=4>
+        <v-row class="justify-space-around text-center">
+            <v-col v-if="$auth.user.address" cols=12 sm=6 md=6 lg=4>
                 <v-card :loading=loading outlined>
                     <v-card-title class="justify-center">
                             آدرس پیش فرض
                     </v-card-title>
                     <v-card-text>
-                            {{$store.state.auth.user.address.fullName}}
+                            {{$auth.user.address.fullName}}
                             <br>
-                            {{$store.state.auth.user.address.state}}
+                            {{$auth.user.address.state}}
                             <br>
-                            {{$store.state.auth.user.address.city}}
+                            {{$auth.user.address.city}}
                             <br>
-                            {{$store.state.auth.user.address.streetAddress}}
+                            {{$auth.user.address.streetAddress}}
                             <br>
-                            <span v-if="$store.state.auth.user.address.zipCode">
-                                کدپستی: {{$store.state.auth.user.address.zipCode}}
+                            <span v-if="$auth.user.address.zipCode">
+                                کدپستی: {{$auth.user.address.zipCode}}
                                 <br>
                             </span>
-                            <span v-if="$store.state.auth.user.address.deilveryIstructions">
+                            <span v-if="$auth.user.address.deilveryIstructions">
                                 <hr>
-                                {{$store.state.auth.user.address.deilveryIstructions}}
+                                {{$auth.user.address.deilveryIstructions}}
                             </span>
-                                تلفن:&nbsp;0{{$store.state.auth.user.address.phoneNumber}}
-                            <span v-if="$store.state.auth.user.address.deliverInstructions">
+                                تلفن:&nbsp;0{{$auth.user.address.phoneNumber}}
+                            <span v-if="$auth.user.address.deliverInstructions">
                                 <hr>
-                                توضیحات:&nbsp;{{$store.state.auth.user.address.deliverInstructions}}
+                                توضیحات:&nbsp;{{$auth.user.address.deliverInstructions}}
                             </span>
                         <hr>
                         <v-btn disabled text> <v-icon>mdi-home</v-icon> &nbsp;آدرس پیش فرض</v-btn>
@@ -94,7 +97,7 @@
                 </v-card>
             </v-col>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

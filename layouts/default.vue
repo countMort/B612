@@ -5,7 +5,7 @@
       fixed
       app
       clipped
-      :mobile-breakpoint="800"
+      :mobile-breakpoint="1000"
     >
       <v-row class="mt-2">
         <v-btn
@@ -88,13 +88,13 @@
             </v-btn>
           </template>
           <template v-if="$store.state.auth.loggedIn">
-            <v-btn nuxt to="/address" color="transparent" class="mt-2 btns">
+            <v-btn :small="$vuetify.breakpoint.xsOnly" nuxt to="/address" color="transparent" class="mt-2 btns">
               <v-icon>mdi-truck-delivery-outline</v-icon>
               &nbsp;{{$store.state.auth.user.address ? $store.state.auth.user.address.fullName : 'به کجا ارسال شود'}}
             </v-btn>
-            <v-btn nuxt to="/orders" color="transparent" class="mt-2 btns">
-            <v-icon>mdi-newspaper-variant</v-icon>
-            &nbsp;سفارشات من
+            <v-btn :small="$vuetify.breakpoint.xsOnly" nuxt to="/orders" color="transparent" class="mt-2 btns">
+              <v-icon>mdi-newspaper-variant</v-icon>
+              &nbsp;سفارشات من
             </v-btn>
           </template>
         </template>
@@ -200,7 +200,10 @@ export default {
       }
       this.snackbar_show = true;
     });
-    this.routes = routeGenerator(this.$auth.user.role)
+    EventBus.$on("openNav",() => {
+      this.drawer = true
+    });
+    // this.routes = routeGenerator(this.$auth.user && this.$auth.user.role)
   },
   computed: {
     ...mapGetters(["getCartLength" , "getCart"])
@@ -208,6 +211,15 @@ export default {
   methods: {
     logout() {
       this.$auth.logout()
+    }
+  },
+  watch: {
+    "$auth.user": {
+      immediate: true ,
+      deep: true ,
+      handler(nv) {
+        this.routes = routeGenerator(nv && nv.role)
+      }
     }
   },
 }

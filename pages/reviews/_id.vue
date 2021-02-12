@@ -1,103 +1,96 @@
 <template>
     <v-row>
-        <v-col cols=12 md=7 lg=7 class="py-0">
+        <v-col cols=12 sm=7 class="py-0">
             <v-card
             :loading="loading"
-            class="mt-5 full-width"
-            align=center
+            class="full-width text-center"
+            tile
             >
             <v-img
-                max-width="30rem"
                 max-height="30rem"
                 :src="product.photo"
-            ></v-img>
+                class="align-end"
+            >
+                <v-card-title style="background-color: rgba(0, 0, 0, 0.345);" class="justify-center py-0">
+                    <nuxt-link :to="`/products/${$route.params.id}`">
+                        {{product.name}}
+                    </nuxt-link>
+                </v-card-title>
+                <v-card-text class="py-0" style="background-color: rgba(0, 0, 0, 0.345);">
+                    <v-row class="justify-center mx-0">
+                    <v-rating
+                        :value="parseInt(product.averageRating)"
+                        color="amber"
+                        half-increments
+                        dense
+                        size="14"
+                        readonly
+                    ></v-rating>
 
-            <v-card-title class="justify-center">{{product.title}}</v-card-title>
-            <v-card-text>
-                <v-row class="justify-center">
-                <v-rating
-                    :value="parseInt(product.averageRating)"
-                    color="amber"
-                    half-increments
-                    dense
-                    size="14"
-                    readonly
-                ></v-rating>
+                    <div class="grey--text ml-4">{{parseInt(product.averageRating)}} ({{product.reviews.length}} رأی)</div>
+                    </v-row>
 
-                <div class="grey--text ml-4">{{parseInt(product.averageRating)}} ({{product.reviews.length}} رأی)</div>
-                </v-row>
+                    <div class="pb-2 subtitle-1">
+                        {{product.price}} تومان• , {{product.category.name}}
+                    </div>
 
-                <div class="my-4 subtitle-1 black--text">
-                {{product.price}} تومان• {{product.owner.name}}, {{product.category.name}}
-                </div>
-
-                <div>{{product.description}}</div>
-            </v-card-text>
-
-            <v-divider class="mx-4"></v-divider>
+                    <div v-if="product.description">{{product.description}}</div>
+                </v-card-text>
+            </v-img>
             </v-card>
         </v-col>
-        <v-col cols=12 md=5 lg=5 class="py-0">
+        <v-col cols=12 sm=5 class="py-0">
             <v-form ref="form">
-            <v-card
-            color="grey lighten-4"
-            flat
-            height="200px"
-            tile
-            class="mt-5 full-width ml-2"
-            >
-                <v-toolbar class="mr-0 pr-0" flat short>
-                <!-- <v-app-bar-nav-icon class="mr-n4 pr-0" @click="collapse = !collapse"></v-app-bar-nav-icon> -->
-                <v-icon class="ml-2">
-                    mdi-comment
-                </v-icon>
-                <v-toolbar-title>نظر {{$store.state.auth.user.name}}</v-toolbar-title>
-
-                <v-spacer></v-spacer>
-                <!-- <v-btn icon>
-                <v-icon>mdi-comment</v-icon>
-                </v-btn> -->
-
-                <!-- <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-                </v-btn> -->
-
-                <!-- <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn> -->
-                </v-toolbar>
-                <hr>
-                <br>
-                <v-row class="justify-center">
-                    <v-chip label>
-                    <v-icon left>$ratingFull</v-icon> امتیاز کلی
-                    </v-chip>
-                    <v-rating
-                    v-model="rating"
-                    color="yellow darken-3"
-                    background-color="grey darken-1"
-                    half-increments
-                    hover
-                    ></v-rating>
-                    <v-text-field class="d-none" :rules="notEmpty" readonly v-model="fromRating"></v-text-field>
-                </v-row>
-                <hr>
-                <br>
-                <v-text-field counter="20" :rules="notEmpty" append-icon="mdi-comment" outlined label="نظر کلی" v-model="headline"></v-text-field>
-                <v-textarea counter="150" :rules="limitedBody" color="info" label="لطفا در صورت تمایل توضیح دهید" outlined append-icon="mdi-comment" v-model="body">
-
-                </v-textarea>
-                <v-card-actions>
-                    <v-btn color="success" @click="submit">ارسال نظر</v-btn>
-                </v-card-actions>
-            </v-card>
+                <v-card
+                flat
+                tile
+                class="full-width"
+                >
+                    <v-card-title class="py-1">
+                        <v-icon class="ml-2">
+                            mdi-comment
+                        </v-icon>
+                        نظر {{$store.state.auth.user.name}}
+                    </v-card-title>
+                    <v-card-text>
+                        <v-row class="justify-center mx-0 my-1">
+                            <v-chip label class="my-auto">
+                                <v-icon left>$ratingFull</v-icon> امتیاز کلی
+                            </v-chip>
+                            <v-rating
+                            v-model="rating"
+                            color="yellow darken-3"
+                            background-color="grey darken-1"
+                            half-increments
+                            hover
+                            ></v-rating>
+                            <v-text-field class="d-none" :rules="notEmpty" readonly v-model="fromRating"></v-text-field>
+                        </v-row>
+                        <v-text-field counter="20" :rules="notEmpty" append-icon="mdi-comment" outlined label="نظر کلی" v-model="headline"></v-text-field>
+                        <v-textarea
+                        rows="4"
+                        auto-grow
+                        counter="150"
+                        :rules="limitedBody"
+                        color="info"
+                        label="لطفا در صورت تمایل توضیح دهید"
+                        outlined
+                        append-icon="mdi-comment"
+                        v-model="body">
+                        </v-textarea>
+                    </v-card-text>
+                    <v-card-actions class="justify-center">
+                        <v-btn class="px-5" color="success" @click="submit">ارسال نظر</v-btn>
+                    </v-card-actions>
+                </v-card>
             </v-form>
         </v-col>
     </v-row>
 </template>s
 
 <script>
-    export default {
+import { EventBus } from "@/utils/event-bus" 
+export default {
     middleware : 'auth' ,
     auth : 'user' ,
     async asyncData({$axios , params}) {
@@ -134,21 +127,29 @@
                 this.loading = true
                 if(this.$refs.form.validate()){
                     let data = {
-                    headline : this.headline ,
-                    body : this.body ,
-                    rating : this.rating
+                        headline : this.headline ,
+                        body : this.body.trim() ,
+                        rating : this.rating
                     }
 
                     let response = await this.$axios.$post(`/api/reviews/${this.$route.params.id}` , data)
                     if(response.success){
                         this.$nuxt.$router.push(`/products/${this.$route.params.id}`)
-                        this.$store.dispatch('notif' , {msg : response.message , type : 'success'})
+                        EventBus.$emit("setSnack" , {
+                            text: response.message ,
+                            color: "green"
+                        })
                     }
                 }
+                this.loading = false
             } catch (error) {
                 this.loading = false
                 this.$store.dispatch('notif' , {msg : error.response.data.message , type : 'error'})
-                console.log(error.response.data.message);
+                error.response && EventBus.$emit("setSnack" , {
+                    text: error.response.data.message ,
+                    color: "red"
+                })
+                console.log(error);
             }
         }
     },
@@ -158,7 +159,7 @@
         }
     },
 
-    }
+}
 </script>
 
 <style scoped>
